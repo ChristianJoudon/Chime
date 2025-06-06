@@ -4,7 +4,7 @@ import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css"; // default styles we’ll override
 import { format } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
-import { DailyAvailability, TimeSlot } from "../../types/calendar";
+import { DailyAvailability, TimeSlot } from "../types/calendar";
 import TimeModal from "./TimeModal";
 
 interface CalendarViewProps {
