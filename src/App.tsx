@@ -1,11 +1,10 @@
-
-import BookingApp from './BookingApp'
-
-export default function App() {
-  return <BookingApp />
-
-import AppShell from './components/AppShell'
+import BookingApp from './components/BookingApp'
+import AppShell   from './components/AppShell'
 
 export default function App() {
-  return <AppShell />
+  return (
+      <AppShell>
+        <BookingApp />
+      </AppShell>
+  );
 }

@@ -1,13 +1,13 @@
 import { useState } from 'react'
-import { Tabs } from './components/Tabs'
-import { ServicesHeader } from './components/ServicesHeader'
-import { ServiceAccordion } from './components/ServiceAccordion'
-import { DatesHeader } from './components/DatesHeader'
-import { HeatmapCalendar } from './components/HeatmapCalendar'
-import { WeeklyAgenda } from './components/WeeklyAgenda'
-import { ConfirmationPrompt } from './components/ConfirmationPrompt'
-import { SuccessToast } from './components/SuccessToast'
-import { Service, AvailabilityMap, AvailabilityWeek, Slot } from './types/service'
+import { Tabs } from './Tabs'
+import { ServicesHeader } from './ServicesHeader'
+import { ServiceAccordion } from './ServiceAccordion'
+import { DatesHeader } from './DatesHeader'
+import { HeatmapCalendar } from './HeatmapCalendar'
+import { WeeklyAgenda } from './WeeklyAgenda'
+import { ConfirmationPrompt } from './ConfirmationPrompt'
+import { SuccessToast } from './SuccessToast'
+import { Service, AvailabilityMap, AvailabilityWeek, Slot } from '../types/service'
 
 export default function BookingApp() {
   const [activeTab, setActiveTab] = useState<'Services' | 'Dates'>('Services')

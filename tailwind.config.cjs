@@ -1,4 +1,10 @@
-module.exports = {
+// tailwind.config.js (ESM version)
+import forms from '@tailwindcss/forms';
+import aspectRatio from '@tailwindcss/aspect-ratio';
+import typography from '@tailwindcss/typography';
+import filters from 'tailwindcss-filters';
+
+export default {
   content: ['./src/**/*.{js,ts,jsx,tsx,html}'],
   theme: {
     extend: {
@@ -18,10 +24,5 @@ module.exports = {
       },
     },
   },
-  plugins: [
-    require('@tailwindcss/forms'),
-    require('@tailwindcss/aspect-ratio'),
-    require('@tailwindcss/typography'),
-    require('tailwindcss-filters'),
-  ],
-}
+  plugins: [forms, aspectRatio, typography, filters],
+};
