@@ -1,7 +1,7 @@
 // src/components/chime/BookingWidget.tsx
 import React, { FC, useState } from "react";
 import CalendarView from "./CalendarView";
-import { DailyAvailability } from "../../types/calendar";
+import { DailyAvailability } from "../types/calendar";
 
 // Example “hard‐coded” availability (for June 2025)
 const sampleAvailability: DailyAvailability[] = [

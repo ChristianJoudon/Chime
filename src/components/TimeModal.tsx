@@ -1,6 +1,6 @@
 // src/components/chime/TimeModal.tsx
 import React, { FC } from "react";
-import { DailyAvailability, TimeSlot } from "../../types/calendar";
+import { DailyAvailability, TimeSlot } from "../types/calendar";
 import { motion } from "framer-motion";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { format } from "date-fns";
