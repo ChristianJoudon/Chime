@@ -1,0 +1,15 @@
+/* index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom global styles */
+@layer base {
+  html, body {
+    @apply bg-gray-50 text-gray-900 font-sans; /* soft gray background, dark text, custom font */
+    @apply h-full;
+  }
+  #root, .app {
+    @apply h-full;
+  }
+}
