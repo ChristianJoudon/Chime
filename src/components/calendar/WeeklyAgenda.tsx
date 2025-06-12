@@ -1,6 +1,6 @@
 import { format, addDays, startOfWeek } from 'date-fns'
 import { motion } from 'framer-motion'
-import { AvailabilityWeek, Slot } from '../types/service'
+import { AvailabilityWeek, Slot } from '../../types/service'
 
 interface WeeklyAgendaProps {
   selectedDate: Date

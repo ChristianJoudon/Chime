@@ -1,36 +1,18 @@
-/* index.css */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/* Custom global styles */
-@layer base {
-  html, body {
-    @apply bg-gray-50 text-gray-900 font-sans; /* soft gray background, dark text, custom font */
-    @apply h-full;
-  }
-  #root, .app {
-    @apply h-full;
-  }
+/* ——— generic colour tokens so the old CSS vars still work ——— */
+:root{
+  --mint: theme(colors.mint.500);
+  --mint-dark: theme(colors.mint.600);
 }
 
-@layer components {
-  .glass-root {
-    @apply fixed inset-0 flex items-center justify-center bg-white/15 backdrop-blur-lg;
-  }
-  .glass-panel {
-    @apply bg-white/30 backdrop-blur-md border border-white/20 rounded-2xl shadow-lg;
-  }
-  .glass-panel-base {
-    @apply bg-white/30 backdrop-blur-md border border-white/20 rounded-2xl shadow-lg;
-  }
-  .glass-panel-deep {
-    @apply bg-white/40 backdrop-blur-lg border border-white/25 rounded-3xl shadow-xl;
-  }
-  .glass-panel-front {
-    @apply bg-white/50 backdrop-blur-xl border border-white/30 rounded-xl shadow-2xl;
-  }
-  .glass-panel-top {
-    @apply bg-white/70 backdrop-blur-2xl border border-white/40 rounded-lg shadow-3xl;
-  }
-}
+/* service-card / time-slot move into Tailwind classes
+   (keep them here so any old markup still works) */
+.service-card     {@apply block w-full text-left p-4 mb-2 border border-gray-300 rounded-lg bg-gray-50 transition-shadow hover:bg-white hover:shadow-lg;}
+.service-deposit  {@apply text-sm text-mint-500;}
+.time-slot        {@apply m-1 px-4 py-2 rounded border border-mint-500 text-mint-500 transition-colors;}
+.time-slot:hover,
+.time-slot.active {@apply bg-mint-500 text-white;}
+.booking-form > div         {@apply mb-4;}
+.booking-form input         {@apply w-full p-2 border border-gray-300 rounded;}
+.booking-form button        {@apply px-4 py-2 rounded bg-mint-500 text-white disabled:opacity-60;}
+.payment-step               {@apply text-center;}
+.confirmation               {@apply p-4 bg-mint-50 dark:bg-green-900/40;}

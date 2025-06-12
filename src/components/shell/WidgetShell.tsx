@@ -1,10 +1,30 @@
 import { useState } from 'react'
-import ServiceList   from './ServiceList'
-import Calendar      from './Calendar'
-import TimeSlots     from './TimeSlots'
-import BookingForm   from './BookingForm'
-import Payment       from './Payment'
-import Confirmation  from './Confirmation'
+import ServiceList   from '../services/ServiceList'
+import Calendar      from '../calendar/Calendar'
+import TimeSlots     from '../calendar/time/TimeSlots'
+import BookingForm   from '../booking/BookingForm'
+import Payment       from '../booking/Payment'
+import Confirmation  from '../booking/Confirmation'
+import CalendarView from '@/components/calendar/dates/CalendarView' // UPDATE PATH
+import { sampleAvailability } from '@/data/sampleAvailability'
+
+export default function WidgetShell() {
+  /* all your existing state stays */
+
+  /* STEP RENDERERS */
+  if (step === 'services') return <ServiceList services={dummyServices} onSelect={handleServiceSelect} />
+
+  if (step === 'date')
+    return (
+        <CalendarView
+            availability={sampleAvailability}
+            onSlotPicked={(slot, date) => {
+              setDate(date.toISOString())
+              setTime(slot.timeLabel)
+              setStep('form') // jump straight to form or 'time' if you keep that step
+            }}
+        />
+    )
 
 interface Service {
   id: string

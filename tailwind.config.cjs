@@ -25,6 +25,9 @@ export default {
       boxShadow: {
         glass: '0 8px 32px rgba(0,0,0,0.08)',
       },
+      backdropBlur: {
+        xs: '2px',
+      },
     },
   },
   plugins: [forms, aspectRatio, typography, filters],

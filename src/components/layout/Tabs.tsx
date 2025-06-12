@@ -20,7 +20,7 @@ export function Tabs({ activeTab, setActiveTab }: TabsProps) {
                 : 'text-mint-700 hover:bg-mint-100/60')
             }
             onClick={() => setActiveTab(tab)}
-            whileTap={{ scale: 0.95 }}
+            whileTap={{ scale: 0.92, rotate: -2 }}
           >
             {tab === 'Services' ? '🔧 Services' : '📅 Dates'}
           </motion.button>

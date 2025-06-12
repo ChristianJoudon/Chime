@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { hoverLift } from '../motionConfigs'
-import { Service } from '../types/service'
+import { hoverLift } from '../../motionConfigs'
+import { Service } from '../../types/service'
 
 interface ServiceAccordionProps {
   onSelectService: (svc: Service) => void

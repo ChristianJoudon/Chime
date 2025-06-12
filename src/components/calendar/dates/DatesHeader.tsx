@@ -1,4 +1,4 @@
-import { Service } from '../types/service'
+import { Service } from '../../../types/service'
 
 export function DatesHeader({ selectedService }: { selectedService: Service }) {
   return (

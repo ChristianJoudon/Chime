@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import { DayPicker } from 'react-day-picker'
-import { AvailabilityMap } from '../types/service'
+import { AvailabilityMap } from '../../types/service'
 import 'react-day-picker/dist/style.css'
 
 interface HeatmapCalendarProps {
