@@ -22,6 +22,9 @@ export default {
           900: '#205A3F',
         },
       },
+      boxShadow: {
+        glass: '0 8px 32px rgba(0,0,0,0.08)',
+      },
     },
   },
   plugins: [forms, aspectRatio, typography, filters],
