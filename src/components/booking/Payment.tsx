@@ -11,7 +11,7 @@ export default function Payment({ onSuccess, amount = 0 }: PaymentProps) {
 
   return (
     <div className="payment-step">
-      <p>Deposit amount: ${amount}</p>
+      <p>{`Deposit amount: $${amount}`}</p>
       <button onClick={handlePay}>Pay Deposit</button>
     </div>
   )

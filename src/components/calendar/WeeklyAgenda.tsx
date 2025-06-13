@@ -1,10 +1,10 @@
 import { format, addDays, startOfWeek } from 'date-fns'
 import { motion } from 'framer-motion'
-import { AvailabilityWeek, Slot } from '../../types/service'
+import type { Slot } from '../../types/calendar'
 
 interface WeeklyAgendaProps {
   selectedDate: Date
-  weekAvailability: AvailabilityWeek
+  weekAvailability: Record<string, Slot[]>
   onSelectSlot: (date: Date, slot: Slot) => void
 }
 
@@ -32,12 +32,12 @@ export function WeeklyAgenda({ selectedDate, weekAvailability, onSelectSlot }: W
               {slots.length === 0 && <p className="text-xs text-gray-500 italic text-center">No slots</p>}
               {slots.map(slot => (
                 <motion.div
-                  key={slot.time}
+                  key={slot.id}
                   className={`flex justify-between items-center px-2 py-1 rounded-lg ${slot.available ? 'bg-white/70 border border-green-300 cursor-pointer' : 'bg-white/70 border border-gray-300 filter grayscale-70 text-gray-500 cursor-not-allowed'}`}
                   whileHover={slot.available ? { rotateX: -5, scale: 1.02, boxShadow: '0 8px 24px rgba(0,0,0,0.15)' } : {}}
                   onClick={() => { if (slot.available) onSelectSlot(day, slot) }}
                 >
-                  <span className="text-sm font-medium">{slot.time}</span>
+                  <span className="text-sm font-medium">{slot.timeLabel}</span>
                   {slot.available ? (
                     <span className="bg-mint-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full animate-pulse">Snag It</span>
                   ) : (

@@ -12,12 +12,12 @@ export { WeeklyAgenda }                    from './src/components/calendar/Weekl
 export { default as SlotModal }            from './src/components/calendar/SlotModal';
 
 /* ---------- services catalog ---------- */
-export { default as ServiceAccordion }     from './src/components/services/ServiceAccordion';
-export { default as ServiceCard }          from './src/components/services/ServiceCard';
-export { default as ServiceGrid }          from './src/components/services/ServiceGrid';
-export { default as ServiceList }          from './src/components/services/ServiceList';
-export { ServicesHeader }                  from './src/components/services/ServicesHeader';
-export { default as WhatYouNeed }          from './src/components/services/WhatYouNeed';
+export { ServiceAccordion }               from './src/components/services/ServiceAccordion';
+export { ServiceCard }                    from './src/components/services/ServiceCard';
+export { ServiceGrid }                    from './src/components/services/ServiceGrid';
+export { default as ServiceList }         from './src/components/services/ServiceList';
+export { ServicesHeader }                 from './src/components/services/ServicesHeader';
+export { WhatYouNeed }                    from './src/components/services/WhatYouNeed';
 
 /* ---------- shared layout ---------- */
 export { default as Header }               from './src/components/layout/Header';
@@ -27,7 +27,7 @@ export { Tabs }                            from './src/components/layout/Tabs';
 /* ---------- UI atoms ---------- */
 export { default as BackButton }           from './src/components/ui/BackButton';
 export { ContinueButton }                  from './src/components/ui/ContinueButton';
-export { default as SuccessToast }         from './src/components/ui/SuccessToast';
+export { SuccessToast }                    from './src/components/ui/SuccessToast';
 
 /* ---------- shell (embeddable widget) ---------- */
 export { default as WidgetShell }          from './src/components/shell/WidgetShell';
