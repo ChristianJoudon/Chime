@@ -1,31 +1,11 @@
 import { useState } from 'react'
-import ServiceList   from '../services/ServiceList'
-import Calendar      from '../calendar/Calendar'
-import TimeSlots     from '../calendar/time/TimeSlots'
-import BookingForm   from '../booking/BookingForm'
-import Payment       from '../booking/Payment'
-import Confirmation  from '../booking/Confirmation'
-import CalendarView from '@/components/calendar/dates/CalendarView' // UPDATE PATH
+import ServiceList from '../services/ServiceList'
+import CalendarView from '../calendar/dates/CalendarView'
+import BookingFlow from '../booking/BookingFlow'
+import { Slot } from '@/types/calendar'
 import { sampleAvailability } from '@/data/sampleAvailability'
 
-export default function WidgetShell() {
-  /* all your existing state stays */
-
-  /* STEP RENDERERS */
-  if (step === 'services') return <ServiceList services={dummyServices} onSelect={handleServiceSelect} />
-
-  if (step === 'date')
-    return (
-        <CalendarView
-            availability={sampleAvailability}
-            onSlotPicked={(slot, date) => {
-              setDate(date.toISOString())
-              setTime(slot.timeLabel)
-              setStep('form') // jump straight to form or 'time' if you keep that step
-            }}
-        />
-    )
-
+// Define service types and data
 interface Service {
   id: string
   name: string
@@ -35,85 +15,55 @@ interface Service {
 
 const dummyServices: Service[] = [
   { id: 'svc1', name: 'Consultation', duration: 30, deposit: 20 },
-  { id: 'svc2', name: 'Repair', duration: 60, deposit: 50 },
+  { id: 'svc2', name: 'Repair',       duration: 60, deposit: 50 },
 ]
 
-function generateTimes(duration: number) {
-  const start = 9
-  const end = 17
-  const times = []
-  for (let h = start; h < end; h++) {
-    times.push(`${h.toString().padStart(2, '0')}:00`)
-    if (duration <= 30) {
-      times.push(`${h.toString().padStart(2, '0')}:30`)
-    }
-  }
-  return times
-}
-
+// Component
 export default function WidgetShell() {
-  const [step, setStep] = useState<'services' | 'date' | 'time' | 'form' | 'payment' | 'confirm'>('services')
+  const [step, setStep] = useState<'services' | 'calendar' | 'booking'>('services')
   const [service, setService] = useState<Service | null>(null)
-  const [date, setDate] = useState('')
-  const [time, setTime] = useState('')
-  const [customer, setCustomer] = useState<{ name: string; email: string } | null>(null)
-  const [booking, setBooking] = useState<any>(null)
-  const [times, setTimes] = useState<string[]>([])
+  const [slot, setSlot] = useState<Slot | null>(null)
 
-  function handleServiceSelect(svc: Service) {
+  // Step transitions
+  function handleSelectService(svc: Service) {
     setService(svc)
-    setDate('')
-    setTime('')
-    setTimes(generateTimes(svc.duration))
-    setStep('date')
+    setStep('calendar')
   }
 
-  function handleDateSelect(d: string) {
-    setDate(d)
-    setStep('time')
+  function handleSelectSlot(slot: Slot) {
+    setSlot(slot)
+    setStep('booking')
   }
 
-  function handleTimeSelect(t: string) {
-    setTime(t)
-    setStep('form')
+  function handleBookingClose() {
+    setStep('calendar')
+    setSlot(null)
   }
 
-  function handleFormSubmit(data: { name: string; email: string }) {
-    setCustomer(data)
-    setStep('payment')
-  }
+  // Render logic
+  return (
+      <div className="min-h-screen p-4 glass-root">
+        <div className="max-w-2xl w-full mx-auto space-y-6">
 
-  function handlePaymentSuccess(pay: { paymentIntentId: string }) {
-    const b = {
-      id: crypto.randomUUID(),
-      service,
-      date,
-      time,
-      customer,
-      payment: pay,
-    }
-    setBooking(b)
-    setStep('confirm')
-  }
+          {/* Step: Services */}
+          {step === 'services' && (
+              <ServiceList services={dummyServices} onSelect={handleSelectService} />
+          )}
 
-  if (step === 'services') {
-    return <ServiceList services={dummyServices} onSelect={handleServiceSelect} />
-  }
-  if (step === 'date') {
-    return <Calendar value={date} onChange={handleDateSelect} />
-  }
-  if (step === 'time') {
-    return <TimeSlots slots={times} onSelect={handleTimeSelect} />
-  }
-  if (step === 'form') {
-    return <BookingForm onSubmit={handleFormSubmit} deposit={service.deposit} />
-  }
-  if (step === 'payment') {
-    return <Payment amount={service.deposit} onSuccess={handlePaymentSuccess} />
-  }
-  if (step === 'confirm') {
-    return <Confirmation booking={booking} />
-  }
-  return null
+          {/* Step: Calendar */}
+          {step === 'calendar' && service && (
+              <CalendarView
+                  availability={sampleAvailability}
+                  onSlotPicked={(slot) => handleSelectSlot(slot)}
+              />
+          )}
+
+          {/* Step: Booking Flow */}
+          {step === 'booking' && slot && (
+              <BookingFlow slot={slot} onClose={handleBookingClose} />
+          )}
+
+        </div>
+      </div>
+  )
 }
-
