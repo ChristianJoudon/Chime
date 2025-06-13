@@ -1,5 +1,5 @@
 import React from 'react';
-import type { DailyAvailability, Slot } from '../src/types/calendar
+import type { Slot } from '../../types/calendar';
 
 interface Props {
   slot: Slot;

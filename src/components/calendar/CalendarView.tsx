@@ -2,7 +2,7 @@ import { FC, useMemo, useState } from 'react'
 import { DayPicker } from 'react-day-picker'
 import { AnimatePresence, motion } from 'framer-motion'
 import 'react-day-picker/dist/style.css'
-import type { DailyAvailability, Slot } from '@/lib/types'
+import type { DailyAvailability, Slot } from '../../types/calendar';
 import SlotModal from './SlotModal'
 import WeeklyAgenda from './WeeklyAgenda'          // ⬅️ your existing file
 import HeatmapCalendar from './HeatmapCalendar'    // ⬅️ optional colourful month view

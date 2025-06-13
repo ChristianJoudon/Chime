@@ -11,11 +11,17 @@ import Header        from '../layout/Header';           // nice to have, drop if
 
 /* ─── sample data & types ──────────────────────────────────────────────── */
 import { sampleAvailability } from '../../data/sampleAvailability';
-import type { Service }        from '../../types/service';
 import type { Slot }           from '../../types/calendar';
 
+interface DemoService {
+  id: string;
+  name: string;
+  duration: number;
+  deposit: number;
+}
+
 /* ─── cheap demo list of services (replace w/ real API later) ──────────── */
-const demoServices: Service[] = [
+const demoServices: DemoService[] = [
   { id: 'svc1', name: 'Consultation', duration: 30, deposit: 20 },
   { id: 'svc2', name: 'Repair',       duration: 60, deposit: 50 },
 ];
@@ -25,11 +31,11 @@ type Step = 'services' | 'calendar' | 'booking' | 'done';
 export default function WidgetShell() {
   /* ── page-level state ─────────────────────────────────────────────── */
   const [step,  setStep]       = useState<Step>('services');
-  const [svc,   setSvc]        = useState<Service | null>(null);
+  const [svc,   setSvc]        = useState<DemoService | null>(null);
   const [slot,  setSlot]       = useState<Slot   | null>(null);
 
   /* ── handlers ─────────────────────────────────────────────────────── */
-  const handleServiceSelect = (s: Service) => {
+  const handleServiceSelect = (s: DemoService) => {
     setSvc(s);
     setStep('calendar');
   };

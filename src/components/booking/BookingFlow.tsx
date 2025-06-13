@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import type { DailyAvailability, Slot } from './types/calendar'
+import type { Slot } from '../../types/calendar';
 import ConfirmationPrompt from './ConfirmationPrompt'
 import DetailsForm       from './DetailsForm'
 import Payment           from './Payment'
@@ -8,7 +8,7 @@ import ConfirmationPage  from './ConfirmationPage'
 
 type Step = 'prompt' | 'checklist' | 'details' | 'payment' | 'done'
 
-export default function BookingFlow({ slot, onClose }: { slot: Slot; onClose?: () => void }) {
+export default function BookingFlow({ slot, onClose, onDone }: { slot: Slot; onClose?: () => void; onDone?: () => void }) {
     const [step, setStep] = useState<Step>('prompt')
     const [customer, setCustomer] = useState<{ name: string; email: string } | null>(null)
 
@@ -23,7 +23,6 @@ export default function BookingFlow({ slot, onClose }: { slot: Slot; onClose?: (
             <AnimatePresence>
                 {step === 'prompt' && (
                     <ConfirmationPrompt
-                        key="prompt"
                         slot={slot}
                         onCancel={onClose ?? (() => {})}
                         onConfirm={() => setStep('checklist')}
@@ -88,7 +87,10 @@ export default function BookingFlow({ slot, onClose }: { slot: Slot; onClose?: (
             {step === 'payment' && customer && (
                 <Payment
                     amount={20}
-                    onSuccess={() => setStep('done')}
+                    onSuccess={() => {
+                        setStep('done');
+                        onDone?.();
+                    }}
                 />
             )}
 

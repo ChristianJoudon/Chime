@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
-import type { DailyAvailability, Slot } from '@/components/types/calendar
+import type { Slot } from '../../types/calendar';
 
 interface Props {
     slot: Slot;
