@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
 import type { Slot } from '../../types/calendar';
+import { ContinueButton } from '../ui/ContinueButton';
 
 interface Props {
     slot: Slot;

@@ -13,7 +13,7 @@ export default function BookingFlow({ slot, onClose, onDone }: { slot: Slot; onC
     const [customer, setCustomer] = useState<{ name: string; email: string } | null>(null)
 
     /* ───────────────────────────────── checklist logic ───────────────────────── */
-    const [checks, setChecks] = useState({ intake: false, terms: false })
+    const [checks, setChecks] = useState<{ intake: boolean; terms: boolean }>({ intake: false, terms: false })
     const allChecked = Object.values(checks).every(Boolean)
 
     /* ───────────────────────────────────────── UI ────────────────────────────── */

@@ -4,8 +4,8 @@ import { AnimatePresence, motion } from 'framer-motion'
 import 'react-day-picker/dist/style.css'
 import type { DailyAvailability, Slot } from '../../types/calendar';
 import SlotModal from './SlotModal'
-import WeeklyAgenda from './WeeklyAgenda'          // ⬅️ your existing file
-import HeatmapCalendar from './HeatmapCalendar'    // ⬅️ optional colourful month view
+import { WeeklyAgenda } from './WeeklyAgenda'          // ⬅️ your existing file
+import { HeatmapCalendar } from './HeatmapCalendar'    // ⬅️ optional colourful month view
 
 type ViewMode = 'month' | 'week' | 'day'
 
@@ -103,7 +103,6 @@ const CalendarView: FC<CalendarViewProps> = ({ availability, onSlotPicked }) => 
             Keeping it here lets you animate back & forth */}
                 {viewMode === 'day' && thisDay && (
                     <SlotModal
-                        key="day"
                         day={thisDay}
                         onPick={(slot) => onSlotPicked?.(slot, thisDay.date)}
                         onClose={() => setViewMode('week')}
