@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Slot } from '@/lib/types'
+import type { DailyAvailability, Slot } from './types/calendar'
 import ConfirmationPrompt from './ConfirmationPrompt'
 import DetailsForm       from './DetailsForm'
 import Payment           from './Payment'

@@ -1,69 +1,92 @@
-import { useState } from 'react'
-import ServiceList from '../services/ServiceList'
-import CalendarView from '../calendar/dates/CalendarView'
-import BookingFlow from '../booking/BookingFlow'
-import { Slot } from '@/types/calendar'
-import { sampleAvailability } from '@/data/sampleAvailability'
+/* --------------------------------------------------------------------------
+ *  src/components/shell/WidgetShell.tsx
+ * ------------------------------------------------------------------------ */
+import { useState } from 'react';
 
-// Define service types and data
-interface Service {
-  id: string
-  name: string
-  duration: number
-  deposit: number
-}
+/* ─── sectional UI pieces ──────────────────────────────────────────────── */
+import ServiceList   from '../services/ServiceList';
+import CalendarView  from '../calendar/CalendarView';
+import BookingFlow   from '../booking/BookingFlow';
+import Header        from '../layout/Header';           // nice to have, drop if not needed
 
-const dummyServices: Service[] = [
+/* ─── sample data & types ──────────────────────────────────────────────── */
+import { sampleAvailability } from '../../data/sampleAvailability';
+import type { Service }        from '../../types/service';
+import type { Slot }           from '../../types/calendar';
+
+/* ─── cheap demo list of services (replace w/ real API later) ──────────── */
+const demoServices: Service[] = [
   { id: 'svc1', name: 'Consultation', duration: 30, deposit: 20 },
   { id: 'svc2', name: 'Repair',       duration: 60, deposit: 50 },
-]
+];
 
-// Component
+type Step = 'services' | 'calendar' | 'booking' | 'done';
+
 export default function WidgetShell() {
-  const [step, setStep] = useState<'services' | 'calendar' | 'booking'>('services')
-  const [service, setService] = useState<Service | null>(null)
-  const [slot, setSlot] = useState<Slot | null>(null)
+  /* ── page-level state ─────────────────────────────────────────────── */
+  const [step,  setStep]       = useState<Step>('services');
+  const [svc,   setSvc]        = useState<Service | null>(null);
+  const [slot,  setSlot]       = useState<Slot   | null>(null);
 
-  // Step transitions
-  function handleSelectService(svc: Service) {
-    setService(svc)
-    setStep('calendar')
-  }
+  /* ── handlers ─────────────────────────────────────────────────────── */
+  const handleServiceSelect = (s: Service) => {
+    setSvc(s);
+    setStep('calendar');
+  };
 
-  function handleSelectSlot(slot: Slot) {
-    setSlot(slot)
-    setStep('booking')
-  }
+  const handleSlotPicked = (picked: Slot) => {
+    setSlot(picked);
+    setStep('booking');           // jump straight into BookingFlow
+  };
 
-  function handleBookingClose() {
-    setStep('calendar')
-    setSlot(null)
-  }
+  const handleBookingDone = () => {
+    setStep('done');
+  };
 
-  // Render logic
+  /* ── rendering ────────────────────────────────────────────────────── */
   return (
-      <div className="min-h-screen p-4 glass-root">
-        <div className="max-w-2xl w-full mx-auto space-y-6">
+      <div className="min-h-screen flex flex-col bg-gray-50 text-gray-800">
+        {/* top bar – optional */}
+        <Header title="📅 Minty Booking Widget" />
 
-          {/* Step: Services */}
+        <main className="flex-1 flex items-center justify-center p-4">
           {step === 'services' && (
-              <ServiceList services={dummyServices} onSelect={handleSelectService} />
+              <ServiceList services={demoServices} onSelect={handleServiceSelect} />
           )}
 
-          {/* Step: Calendar */}
-          {step === 'calendar' && service && (
+          {step === 'calendar' && svc && (
               <CalendarView
+                  /* you can filter availability by selected service later */
                   availability={sampleAvailability}
-                  onSlotPicked={(slot) => handleSelectSlot(slot)}
+                  onSlotPicked={handleSlotPicked}
               />
           )}
 
-          {/* Step: Booking Flow */}
           {step === 'booking' && slot && (
-              <BookingFlow slot={slot} onClose={handleBookingClose} />
+              <BookingFlow
+                  slot={slot}
+                  onClose={() => setStep('calendar')}
+                  onDone={handleBookingDone}
+              />
           )}
 
-        </div>
+          {step === 'done' && (
+              <div className="glass-panel p-8 rounded-xl text-center space-y-4">
+                <h2 className="text-2xl font-semibold text-mint-600">All set!</h2>
+                <p className="text-gray-700">Check your inbox for the confirmation.</p>
+                <button
+                    onClick={() => {
+                      setSvc(null);
+                      setSlot(null);
+                      setStep('services');
+                    }}
+                    className="px-6 py-2 rounded-lg bg-mint-500 text-white hover:bg-mint-600"
+                >
+                  Book another
+                </button>
+              </div>
+          )}
+        </main>
       </div>
-  )
+  );
 }

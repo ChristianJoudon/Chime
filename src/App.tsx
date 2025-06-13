@@ -1,20 +1,30 @@
-import { useState } from 'react'
-import Header from './src/components/layout/Header'
-import CalendarView from './src/components/calendar/dates/CalendarView'
-import BookingFlow from './src/components/booking/BookingFlow'
-import { sampleAvailability } from './src/data/sampleAvailability'
-import { Slot } from './src/types/calendar'
-import { AnimatePresence, motion } from 'framer-motion'
+/* --------------------------------------------------------------------------
+ *  src/App.tsx
+ * ------------------------------------------------------------------------ */
+import { useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+
+/* shared UI */
+import Header       from './components/layout/Header';
+
+/* calendar → booking flow */
+import CalendarView from './components/calendar/CalendarView';
+import BookingFlow  from './components/booking/BookingFlow';
+
+/* demo data & types */
+import { sampleAvailability } from './data/sampleAvailability';
+import type { Slot }          from './types/calendar';
 
 export default function App() {
-    const [slot, setSlot] = useState<Slot | null>(null)
+    const [slot, setSlot] = useState<Slot | null>(null);
 
     return (
-        <div className="min-h-full flex flex-col bg-gray-50 text-gray-900">
-            <Header title="Chime Booking" />
+        <div className="min-h-screen flex flex-col bg-gray-50 text-gray-900">
+            {/* sticky top bar (remove if you want a frameless widget) */}
+            <Header title="📅 Chime Booking" />
 
             <main className="flex flex-col md:flex-row flex-1 md:divide-x md:divide-gray-200">
-                {/* Calendar Section */}
+                {/* ── Calendar panel ───────────────────────────────────────────── */}
                 <section className="md:w-2/3 p-4">
                     <CalendarView
                         availability={sampleAvailability}
@@ -22,7 +32,7 @@ export default function App() {
                     />
                 </section>
 
-                {/* Booking Flow Section */}
+                {/* ── Booking-flow panel ──────────────────────────────────────── */}
                 <section className="md:w-1/3 p-4">
                     <AnimatePresence mode="wait">
                         {slot ? (
@@ -34,7 +44,11 @@ export default function App() {
                                 transition={{ duration: 0.3 }}
                                 className="glass-panel p-4 rounded-xl shadow-xl"
                             >
-                                <BookingFlow slot={slot} onClose={() => setSlot(null)} />
+                                <BookingFlow
+                                    slot={slot}
+                                    onClose={() => setSlot(null)}     // go back to calendar
+                                    onDone={() => setSlot(null)}      // reset after confirmation
+                                />
                             </motion.div>
                         ) : (
                             <motion.p
@@ -44,12 +58,12 @@ export default function App() {
                                 exit={{ opacity: 0 }}
                                 className="text-center text-gray-500"
                             >
-                                Select a date and time to begin booking.
+                                Select a date &amp; time to begin booking.
                             </motion.p>
                         )}
                     </AnimatePresence>
                 </section>
             </main>
         </div>
-    )
+    );
 }

@@ -1,10 +1,12 @@
-export interface TimeSlot {
-  time: string
-  available: boolean
-  label?: string
+// src/types/calendar.ts
+export interface Slot {
+  id: string;             // unique id
+  timeLabel: string;      // "03:30 PM"
+  available: boolean;
+  label?: string;         // "SOLD OUT!" / "4 left" / etc
 }
 
 export interface DailyAvailability {
-  date: Date
-  slots: TimeSlot[]
+  date: Date;             // JS Date object (midnight of that day)
+  slots: Slot[];
 }
