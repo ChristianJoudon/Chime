@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import type { DailyAvailability, Slot } from './components/types/calendar'
+import type { DailyAvailability, Slot } from '../../types/calendar';
 
 interface SlotModalProps {
     day: DailyAvailability

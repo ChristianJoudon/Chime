@@ -14,9 +14,14 @@
     "moduleResolution": "Bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["*"]
+    },
+    "typeRoots": ["./src/@types", "./node_modules/@types"],
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "preserve"
   },
-  "include": ["src"],
+  "include": ["src", "src/declarations.d.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

@@ -1,10 +1,12 @@
 // ServiceCard.jsx
 import { motion } from "framer-motion";
+import type { Key } from 'react';
 
 export interface ServiceCardProps {
   service: { id: number | string; name: string; duration?: string; description?: string }
   selected?: boolean
   onSelect: (service: any) => void
+  key?: Key
 }
 
 export function ServiceCard({ service, selected = false, onSelect }: ServiceCardProps) {
