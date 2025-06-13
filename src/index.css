@@ -16,3 +16,32 @@
 .booking-form button        {@apply px-4 py-2 rounded bg-mint-500 text-white disabled:opacity-60;}
 .payment-step               {@apply text-center;}
 .confirmation               {@apply p-4 bg-mint-50 dark:bg-green-900/40;}
+
+@layer utilities {
+  .scroll-snap-x {
+    scroll-snap-type: x mandatory;
+  }
+  .scroll-snap-start {
+    scroll-snap-align: start;
+  }
+}
+
+/* ---------- global layout polish ---------- */
+@layer base {
+  body {
+    @apply min-h-screen flex flex-col items-center;
+    background: linear-gradient(180deg, #E6F8F2 0%, #fff 80%);
+  }
+}
+
+@layer components {
+  /* beef-up glass look */
+  .glass-panel       { @apply bg-white/40 backdrop-blur-lg border border-white/30 shadow-lg rounded-2xl; }
+  .glass-panel-front { @apply bg-white/50 backdrop-blur-xl border border-white/40 shadow-2xl rounded-xl; }
+}
+
+/* ---------- tiny helpers ---------- */
+@layer utilities {
+  .scroll-x-snap     { scroll-snap-type: x mandatory; }
+  .scroll-x-start    { scroll-snap-align: start; }
+}

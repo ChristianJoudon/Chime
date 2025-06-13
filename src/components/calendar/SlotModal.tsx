@@ -26,7 +26,7 @@ export default function SlotModal({ day, onPick, onClose }: SlotModalProps) {
                             if (s.available) onPick(s)
                             onClose()
                         }}
-                        className={`w-full py-2 rounded-lg text-sm font-medium transition
+                        className={`w-full py-1.5 rounded-lg text-sm font-medium transition text-left whitespace-nowrap
               ${
                             s.available
                                 ? 'bg-mint-500 hover:bg-mint-600 text-white'

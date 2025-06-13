@@ -21,7 +21,7 @@ export default function App() {
     return (
         <div className="min-h-screen flex flex-col bg-gray-50 text-gray-900">
             {/* sticky top bar (remove if you want a frameless widget) */}
-            <Header title="📅 Chime Booking" />
+            <Header title="Chime" />
 
             <main className="flex flex-col md:flex-row flex-1 md:divide-x md:divide-gray-200">
                 {/* ── Calendar panel ───────────────────────────────────────────── */}

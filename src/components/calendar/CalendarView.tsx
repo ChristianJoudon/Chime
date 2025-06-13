@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import 'react-day-picker/dist/style.css'
 import type { DailyAvailability, Slot } from '../../types/calendar';
 import SlotModal from './SlotModal'
-import { WeeklyAgenda } from './WeeklyAgenda'          // ⬅️ your existing file
+import WeeklyAgenda from './WeeklyAgenda'          // ⬅️ your existing file
 import { HeatmapCalendar } from './HeatmapCalendar'    // ⬅️ optional colourful month view
 
 type ViewMode = 'month' | 'week' | 'day'
@@ -43,7 +43,7 @@ const CalendarView: FC<CalendarViewProps> = ({ availability, onSlotPicked }) => 
 
     /* ───────── render ───────── */
     return (
-        <div className="w-full max-w-lg mx-auto space-y-6">
+        <div className="w-full max-w-lg mx-auto space-y-6 list-none">
             {/* mini tabs */}
             <div className="flex justify-center space-x-2">
                 {(['month', 'week', 'day'] as ViewMode[]).map((mode) => (

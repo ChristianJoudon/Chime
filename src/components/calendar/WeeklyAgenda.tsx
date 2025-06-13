@@ -1,54 +1,98 @@
-import { format, addDays, startOfWeek } from 'date-fns'
+// src/components/calendar/WeeklyAgenda.tsx
+import { addDays, format, startOfWeek } from 'date-fns'
 import { motion } from 'framer-motion'
-import type { Slot } from '../../types/calendar'
+import type { AvailabilityWeek, Slot } from '@/types/calendar'
 
-interface WeeklyAgendaProps {
+interface Props {
   selectedDate: Date
-  weekAvailability: Record<string, Slot[]>
-  onSelectSlot: (date: Date, slot: Slot) => void
+  weekAvailability: AvailabilityWeek
+  onSelectSlot: (day: Date, slot: Slot) => void
 }
 
-export function WeeklyAgenda({ selectedDate, weekAvailability, onSelectSlot }: WeeklyAgendaProps) {
-  const weekStart = startOfWeek(selectedDate, { weekStartsOn: 1 })
+export default function WeeklyAgenda ({
+                                        selectedDate,
+                                        weekAvailability,
+                                        onSelectSlot,
+                                      }: Props) {
+  /* ───────── helpers ───────── */
+  const weekStart = startOfWeek(selectedDate, { weekStartsOn: 1 })          // Mon-first
   const days = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i))
 
+  /* ───────── UI ───────── */
   return (
-    <motion.div
-      className="grid grid-cols-7 gap-3 w-full max-w-5xl mx-auto mt-8"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0, transition: { duration: 0.5 } }}
-    >
-      {days.map(day => {
-        const key = day.toISOString().slice(0, 10)
-        const slots = weekAvailability[key] ?? []
-        const isToday = key === selectedDate.toISOString().slice(0, 10)
-        return (
-          <div key={key} className="flex flex-col">
-            <div className={`${isToday ? 'bg-mint-500 text-white' : 'bg-white/30 text-gray-800'} backdrop-blur-md border border-white/20 rounded-t-lg py-2 text-center`}>
-              <span className="block font-semibold text-sm">{format(day, 'EEE')}</span>
-              <span className="block font-semibold">{format(day, 'M/d')}</span>
-            </div>
-            <div className="glass-panel-front flex-1 overflow-y-auto py-2 px-1 space-y-2">
-              {slots.length === 0 && <p className="text-xs text-gray-500 italic text-center">No slots</p>}
-              {slots.map(slot => (
-                <motion.div
-                  key={slot.id}
-                  className={`flex justify-between items-center px-2 py-1 rounded-lg ${slot.available ? 'bg-white/70 border border-green-300 cursor-pointer' : 'bg-white/70 border border-gray-300 filter grayscale-70 text-gray-500 cursor-not-allowed'}`}
-                  whileHover={slot.available ? { rotateX: -5, scale: 1.02, boxShadow: '0 8px 24px rgba(0,0,0,0.15)' } : {}}
-                  onClick={() => { if (slot.available) onSelectSlot(day, slot) }}
+      <div className="overflow-x-auto py-4 scroll-snap-x">
+        <motion.ul
+            /* horizontal “hand of cards” */
+            className="flex space-x-4 w-max px-2"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0, transition: { duration: .45 } }}
+        >
+          {days.map(day => {
+            const key   = day.toISOString().slice(0, 10)
+            const slots = weekAvailability[key] ?? []
+            const isSel = key === selectedDate.toISOString().slice(0, 10)
+
+            return (
+                <li
+                    key={key}
+                    className="flex-shrink-0 w-44 sm:w-52 lg:w-56 cursor-default"
                 >
-                  <span className="text-sm font-medium">{slot.timeLabel}</span>
-                  {slot.available ? (
-                    <span className="bg-mint-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full animate-pulse">Snag It</span>
-                  ) : (
-                    <motion.span className="text-xs" whileHover={{ rotate: 360 }} transition={{ duration: 0.6 }}>🔒</motion.span>
-                  )}
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        )
-      })}
-    </motion.div>
+                  {/* Day header card */}
+                  <div
+                      className={`
+                  ${isSel ? 'bg-mint-500 text-white' : 'bg-white/30 text-gray-900'}
+                  backdrop-blur-md border border-white/20 rounded-t-2xl
+                  pt-3 pb-2 text-center shadow-md
+                `}
+                  >
+                    <p className="text-sm font-medium">
+                      {format(day, 'EEE')}
+                    </p>
+                    <p className="text-lg font-semibold tracking-wide">
+                      {format(day, 'd')}
+                    </p>
+                  </div>
+
+                  {/* Slot list */}
+                  <div
+                      className="glass-panel-front h-72 overflow-y-auto px-2 py-3
+                           rounded-b-2xl space-y-2"
+                  >
+                    {slots.length === 0 && (
+                        <p className="text-xs italic text-gray-500 text-center">
+                          No slots
+                        </p>
+                    )}
+
+                    {slots.map(slot => (
+                        <motion.button
+                            key={slot.id}
+                            disabled={!slot.available}
+                            onClick={() => slot.available && onSelectSlot(day, slot)}
+                            whileHover={
+                              slot.available
+                                  ? { scale: 1.03, y: -2 }
+                                  : undefined
+                            }
+                            className={`
+                      w-full flex items-center justify-between px-2 py-1 rounded-lg
+                      text-sm font-medium transition
+                      ${slot.available
+                                ? 'bg-white/70 border border-green-300 hover:bg-mint-50'
+                                : 'bg-white/50 border border-gray-300 text-gray-400 cursor-not-allowed line-through'}
+                    `}
+                        >
+                          {slot.timeLabel}
+                          {slot.available
+                              ? <span className="text-[10px] text-mint-600 font-semibold uppercase">{slot.label ?? 'Book'}</span>
+                              : <span className="text-xs">🔒</span>}
+                        </motion.button>
+                    ))}
+                  </div>
+                </li>
+            )
+          })}
+        </motion.ul>
+      </div>
   )
 }
