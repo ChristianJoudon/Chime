@@ -1,11 +1,21 @@
-// tailwind.config.js (ESM version)
-import forms from '@tailwindcss/forms';
-import aspectRatio from '@tailwindcss/aspect-ratio';
-import typography from '@tailwindcss/typography';
-import filters from 'tailwindcss-filters';
+/* --------------------------------------------------------------------------
+ *  Tailwind CSS configuration – Common-JS version
+ *  (keeps all your existing colour + plugin settings)
+ * -------------------------------------------------------------------------*/
 
-export default {
-  content: ['./src/**/*.{js,ts,jsx,tsx,html}'],
+const forms        = require('@tailwindcss/forms');
+const aspectRatio  = require('@tailwindcss/aspect-ratio');
+const typography   = require('@tailwindcss/typography');
+const filters      = require('tailwindcss-filters');
+const defaultTheme = require('tailwindcss/defaultTheme');
+
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    './index.html',
+    './src/**/*.{js,ts,jsx,tsx,html}',
+  ],
+
   theme: {
     extend: {
       colors: {
@@ -22,13 +32,26 @@ export default {
           900: '#205A3F',
         },
       },
+
+      fontFamily: {
+        // keep existing Inter + default stack
+        sans: ['Inter', ...defaultTheme.fontFamily.sans],
+      },
+
       boxShadow: {
         glass: '0 8px 32px rgba(0,0,0,0.08)',
       },
+
       backdropBlur: {
         xs: '2px',
       },
     },
   },
-  plugins: [forms, aspectRatio, typography, filters],
+
+  plugins: [
+    forms,
+    aspectRatio,
+    typography,
+    filters,
+  ],
 };

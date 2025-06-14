@@ -10,3 +10,7 @@ export interface DailyAvailability {
   date: Date;             // JS Date object (midnight of that day)
   slots: Slot[];
 }
+
+/** A quick look-up map used by WeeklyAgenda:
+ *  { "2025-06-06": [ …slots… ], "2025-06-07": [ … ] }  */
+export type AvailabilityWeek = Record<string, Slot[]>;
