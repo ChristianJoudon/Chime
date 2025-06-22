@@ -1,98 +1,152 @@
-/* --------------------------------------------------------------------------
- *  src/components/shell/WidgetShell.tsx
+/* ──────────────────────────────────────────────────────────────────────────
+ *  WidgetShell.tsx
+ *
+ *  “Shell” that coordinates the three mini-apps:
+ *    ① ServiceList     – pick WHAT
+ *    ② CalendarView    – pick WHEN
+ *    ③ BookingFlow     – confirm + pay
+ *
+ *  2025-06-19  – slide-over behaviour refined
+ *  ────────────────────────────────────────────────────────────────────────
+ *  • Fixed className bug (template-string now quoted correctly)
+ *  • bookingOpen ➜  true the moment a slot is picked
+ *      – CLOSED  =  ⅔ left   | ⅓ right
+ *      – OPEN    =  ⅓ left   | ⅔ right   (stays until a full restart)
+ *  • Copious comments for maintainers
  * ------------------------------------------------------------------------ */
+
 import { useState } from 'react';
 
-/* ─── sectional UI pieces ──────────────────────────────────────────────── */
-import ServiceList   from '../services/ServiceList';
-import CalendarView  from '../calendar/CalendarView';
-import BookingFlow   from '../booking/BookingFlow';
-import Header        from '../layout/Header';           // nice to have, drop if not needed
+/* section UIs */
+import ServiceList  from '../services/ServiceList';
+import CalendarView from '../calendar/CalendarView';
+import BookingFlow  from '../booking/BookingFlow';
+import Header       from '../layout/Header';
 
-/* ─── sample data & types ──────────────────────────────────────────────── */
+/* demo data & types */
 import { sampleAvailability } from '../../data/sampleAvailability';
-import type { Slot }           from '../../types/calendar';
+import type { Slot }          from '../../types/calendar';
 
+/* Fake service seeds (swap for API later) */
 interface DemoService {
-  id: string;
-  name: string;
-  duration: number;
-  deposit: number;
+  id      : string;
+  name    : string;
+  duration: number;   // minutes
+  deposit : number;   // USD
 }
-
-/* ─── cheap demo list of services (replace w/ real API later) ──────────── */
 const demoServices: DemoService[] = [
   { id: 'svc1', name: 'Consultation', duration: 30, deposit: 20 },
   { id: 'svc2', name: 'Repair',       duration: 60, deposit: 50 },
 ];
 
+/* Finite-state machine */
 type Step = 'services' | 'calendar' | 'booking' | 'done';
 
 export default function WidgetShell() {
-  /* ── page-level state ─────────────────────────────────────────────── */
-  const [step,  setStep]       = useState<Step>('services');
-  const [svc,   setSvc]        = useState<DemoService | null>(null);
-  const [slot,  setSlot]       = useState<Slot   | null>(null);
+  /* ─── GLOBAL STATE ─────────────────────────────────────────────── */
+  const [step,  setStep]  = useState<Step>('services');
+  const [svc,   setSvc]   = useState<DemoService | null>(null);
+  const [slot,  setSlot]  = useState<Slot        | null>(null);
 
-  /* ── handlers ─────────────────────────────────────────────────────── */
-  const handleServiceSelect = (s: DemoService) => {
-    setSvc(s);
+  /* toggles `booking-open` CSS ==> ⅓ | ⅔ layout                        */
+  const [bookingOpen, setBookingOpen] = useState(false);
+
+  /* ─── HANDLERS ──────────────────────────────────────────────────── */
+  /* ① user picks a service */
+  function handleServiceSelect(selected: DemoService) {
+    setSvc(selected);
     setStep('calendar');
-  };
+  }
 
-  const handleSlotPicked = (picked: Slot) => {
-    setSlot(picked);
-    setStep('booking');           // jump straight into BookingFlow
-  };
+  /* ② user picks a free slot              (opens sidebar) */
+  function handleSlotPicked(pickedSlot: Slot) {
+    setSlot(pickedSlot);
+    setStep('booking');
+    setBookingOpen(true);
+  }
 
-  const handleBookingDone = () => {
+  /* ③ inside BookingFlow → Cancel (goes back to calendar, collapse) */
+  function handleFlowClose() {
+    setStep('calendar');
+    setBookingOpen(false);
+  }
+
+  /* ④ payment finished – keep sidebar open until restart */
+  function handleBookingDone() {
     setStep('done');
-  };
+  }
 
-  /* ── rendering ────────────────────────────────────────────────────── */
+  /* ⑤ restart the whole flow */
+  function handleRestart() {
+    setSvc(null);
+    setSlot(null);
+    setStep('services');
+    setBookingOpen(false);
+  }
+
+  /* ─── RENDER ────────────────────────────────────────────────────── */
   return (
-      <div className="min-h-screen flex flex-col bg-gray-50 text-gray-800">
-        {/* top bar – optional */}
-        <Header title="📅 Minty Booking Widget" />
+      /* booking-shell grid:
+         · CLOSED  = 2 / 1   (index.css → grid-template-columns: 2fr 1fr)
+         · OPEN    = 1 / 2   (index.css → .booking-open overrides to 1fr 2fr) */
+      <div className={`booking-shell ${bookingOpen ? 'booking-open' : ''}`}>
+        {/* LEFT column (service list / calendar) */}
+        <section className="flex-1 flex flex-col">
+          <Header title="Chime" />
 
-        <main className="flex-1 flex items-center justify-center p-4">
-          {step === 'services' && (
-              <ServiceList services={demoServices} onSelect={handleServiceSelect} />
-          )}
+          <div className="flex-1 flex items-start justify-center p-6">
+            {step === 'services' && (
+                <ServiceList
+                    services={demoServices}
+                    onSelect={handleServiceSelect}
+                />
+            )}
 
-          {step === 'calendar' && svc && (
-              <CalendarView
-                  /* you can filter availability by selected service later */
-                  availability={sampleAvailability}
-                  onSlotPicked={handleSlotPicked}
-              />
-          )}
+            {step === 'calendar' && svc && (
+                <CalendarView
+                    availability={sampleAvailability}
+                    onSlotPicked={handleSlotPicked}
+                />
+            )}
+          </div>
+        </section>
 
-          {step === 'booking' && slot && (
+        {/* RIGHT column (booking sidebar) */}
+        <aside className="flex flex-col px-6 pt-10">
+          {/* confirm / pay multi-step flow */}
+          {step === 'booking' && slot && svc && (
               <BookingFlow
+                  service={svc}
                   slot={slot}
-                  onClose={() => setStep('calendar')}
+                  onClose={handleFlowClose}
                   onDone={handleBookingDone}
               />
           )}
 
+          {/* thank-you screen */}
           {step === 'done' && (
               <div className="glass-panel p-8 rounded-xl text-center space-y-4">
                 <h2 className="text-2xl font-semibold text-mint-600">All set!</h2>
-                <p className="text-gray-700">Check your inbox for the confirmation.</p>
+                <p className="text-gray-700">We’ve emailed your confirmation.</p>
+
                 <button
-                    onClick={() => {
-                      setSvc(null);
-                      setSlot(null);
-                      setStep('services');
-                    }}
-                    className="px-6 py-2 rounded-lg bg-mint-500 text-white hover:bg-mint-600"
+                    onClick={handleRestart}
+                    className="px-6 py-2 rounded-lg bg-mint-500 text-white hover:bg-mint-600 focus-ring"
                 >
                   Book another
                 </button>
               </div>
           )}
-        </main>
+
+          {/* helper hint while sidebar is empty */}
+          {(step === 'services' || step === 'calendar') && (
+              <p className="mt-24 text-center text-gray-500 select-none">
+                Select a date &amp; time<br />to begin booking.
+              </p>
+          )}
+        </aside>
       </div>
   );
 }
+
+/* EOF ─────────────────────────────────────────────────────────────────── */

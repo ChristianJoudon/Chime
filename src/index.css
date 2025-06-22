@@ -1,66 +1,112 @@
-/* ────────────────────────────── Tailwind layers ────────────────────────────── */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* ---------------------------------------------------------
+   Tailwind v4 entry-point  ➜  loads Tailwind + JS config
+   --------------------------------------------------------- */
+@import "tailwindcss";             /* replaces @tailwind base/… in v4 */
+@config "../tailwind.config.cjs";   /* path is relative to this file */
 
-/* --------------------------------------------------------------------------- */
-/* generic CSS vars so any vanilla-CSS still works (and nicer dev-tools)       */
+
+/* ---------------------------------------------------------
+   CSS variables – palettes, shorthands, glass colours
+   --------------------------------------------------------- */
 :root{
-  --mint:       theme('colors.mint.500');   /* ← added quotes */
-  --mint-dark:  theme('colors.mint.600');   /* ← added quotes */
-  --glass:      rgba(255,255,255,.40);      /* fallback glass colour */
-  --glass-dark: rgba(30,30,30,.35);
+  /* mint palette */
+  --mint-50:  #E6F8F2;
+  --mint-100: #CCF1E4;
+  --mint-200: #A8E6CF;
+  --mint-300: #8ADABF;
+  --mint-400: #6BCCAC;
+  --mint-500: #4DBD98;
+  --mint-600: #42A682;
+  --mint-700: #37946B;
+  --mint-800: #2C7855;
+  --mint-900: #205A3F;
+
+  /* handy aliases */
+  --mint:      var(--mint-500);
+  --mint-dark: var(--mint-600);
+
+  /* liquid-glass fallbacks */
+  --glass:      rgba(255,255,255,.70);
+  --glass-dark: rgba(255,255,255,.70);
 }
-/* dark-mode variable overrides (auto; Tailwind toggles `dark` class on <html>) */
+/* dark-mode (Tailwind adds `.dark` on <html>) */
 .dark{
   --glass:      rgba(40,40,40,.55);
   --glass-dark: rgba(17,17,17,.55);
 }
 
-/* --------------------------------------------------------------------------- */
-/* GLOBAL LAYOUT – minimalist, centred, soft gradient                          */
-@layer base {
-  html,body,#root{
-    @apply h-full;
-  }
+/* ---------------------------------------------------------
+   GLOBAL LAYOUT  (base-ish layer)
+   --------------------------------------------------------- */
+/* ---------- BASE ---------- */
+@layer base{
+  html,body,#root{@apply h-full;}
   body{
     @apply font-sans antialiased text-gray-900 dark:text-gray-100
     flex flex-col items-center min-h-screen;
-    background: linear-gradient(180deg,#E6F8F2 0%, #FFFFFF 80%);
+    background:linear-gradient(180deg,#E6F8F2 0%,#fff 80%);
   }
-  .dark body{
-    background: linear-gradient(180deg,#0E1A14 0%, #0B0B0B 90%);
-  }
+  .dark body{background:linear-gradient(180deg,#0E1A14 0%,#0B0B0B 90%);}
 }
 
-/* --------------------------------------------------------------------------- */
-/* COMPONENT LAYER – “liquid glass” cards & helpers                            */
-@layer components {
-
-  /* glass hierarchy */
+/* ---------- COMPONENTS ---------- */
+@layer components{
+  /* core glass style */
   .glass-panel{
     @apply rounded-2xl border shadow-lg backdrop-blur-lg
     border-white/30 dark:border-white/10
     bg-[color:var(--glass)];
   }
+
+  /* can’t @apply glass-panel — repeat its utilities + your tweaks */
   .glass-panel-front{
-    @apply glass-panel bg-[color:var(--glass-dark)] shadow-2xl;
-  }
-  .glass-panel-deep{
-    @apply glass-panel backdrop-blur-2xl shadow-2xl border-white/40;
+    @apply rounded-2xl border shadow-2xl backdrop-blur-lg
+    border-white/30 dark:border-white/10
+    bg-[color:var(--glass-dark)];
   }
 
-  /* SERVICE-/TIME-cards (legacy hooks + new tailwind) */
+  .glass-panel-deep{
+    @apply rounded-2xl border shadow-2xl backdrop-blur-2xl
+    border-white/30 bg-[color:var(--glass)];
+  }
+
+
+  /* ——— ③ smooth width-shift for the booking sidebar ——— */
+  /* delete every older .booking-shell block and paste this once */
+
+  .booking-shell{
+    /* two columns: calendar | sidebar  (sidebar collapsed) */
+    --sidebarClosed: 66.666%;      /* tweak if you want it slimmer */
+    --sidebarOpen:   33.333%;      /* ≈ 2⁄3 of a 960-ish canvas   */
+
+    display: grid;
+    grid-template-columns: 1fr var(--sidebarClosed);
+    transition: grid-template-columns .4s ease;   /* smooth slide */
+  }
+
+  /* when a slot is picked WidgetShell adds .booking-open */
+  .booking-shell.booking-open{
+    grid-template-columns: 1fr var(--sidebarOpen);
+  }
+
+  /* let the calendar panel shrink, but never vanish */
+  .booking-shell > :first-child{ min-width:12rem; }
+
+  /* the sidebar is a fixed-width column in both states */
+  .booking-shell > :last-child{
+    width:  var(--sidebarOpen);    /* grid still governs layout */
+    max-width: 100%;               /* safety for very narrow screens */
+  }
+
+
+  /* SERVICE-/TIME-cards */
   .service-card{
     @apply block w-full text-left p-4 mb-2 rounded-xl border border-gray-200
     bg-white/60 hover:bg-white shadow hover:shadow-lg transition;
   }
-  .dark .service-card{
-    @apply bg-white/10 border-white/10 hover:bg-white/5;
-  }
-  .service-deposit{
-    @apply text-sm text-mint-600 dark:text-mint-400;
-  }
+  .dark .service-card{@apply bg-white/10 border-white/10 hover:bg-white/5;}
+
+  .service-deposit{@apply text-sm text-mint-600 dark:text-mint-400;}
 
   .time-slot{
     @apply m-1 px-4 py-2 rounded-md border border-mint-500
@@ -68,57 +114,36 @@
     disabled:opacity-40 disabled:cursor-not-allowed
     transition-colors select-none;
   }
-  .time-slot.active{
-    @apply bg-mint-500 text-white;
-  }
+  .time-slot.active{@apply bg-mint-500 text-white;}
 
-  /* booking / forms */
-  .booking-form>div{ @apply mb-4; }
-  .booking-form input{
-    @apply w-full p-2 rounded-md border border-gray-300 focus:ring-2
-    focus:ring-mint-500 outline-none bg-white/70 dark:bg-white/10;
-  }
-  .booking-form button{
-    @apply w-full py-2 rounded-lg bg-mint-500 hover:bg-mint-dark text-white
-    disabled:opacity-50 transition;
-  }
 
-  .payment-step{ @apply text-center space-y-3; }
-  .confirmation{ @apply p-4 rounded-xl bg-mint-50 dark:bg-mint-950/20; }
+  /* Booking / forms */
+  .booking-form>div   {@apply mb-4;}
+  .booking-form input {@apply w-full p-2 rounded-md border border-gray-300
+  focus:ring-2 focus:ring-mint-500
+  outline-none bg-white/70 dark:bg-white/10;}
+  .booking-form button{@apply w-full py-2 rounded-lg bg-mint-500 hover:bg-mint-600
+  text-white disabled:opacity-50 transition;}
 
-  /* header icon / title area can reuse hero in many pages */
-  .hero-title{
-    @apply text-4xl md:text-5xl font-semibold text-gray-900 dark:text-white;
+  .payment-step{@apply text-center space-y-3;}
+  .confirmation{@apply p-4 rounded-xl bg-mint-50 dark:bg-mint-900/20;}
+
+  .hero-title{@apply text-4xl md:text-5xl font-semibold text-gray-900 dark:text-white;}
+  .rdp-nav_button{
+    @apply text-mint-600 hover:text-mint-700;
   }
 }
 
-/* --------------------------------------------------------------------------- */
-/* UTILITIES – scroll-snap, tiny motion helpers, shadows, etc                  */
-@layer utilities {
+/* ---------- UTILITIES ---------- */
+@layer utilities{
+  .scroll-snap-x    {scroll-snap-type:x mandatory;}
+  .scroll-snap-start{scroll-snap-align:start;}
 
-  /* horizontal “hand-of-cards” scroll container */
-  .scroll-snap-x{
-    scroll-snap-type:x mandatory;
-  }
-  .scroll-snap-start{
-    scroll-snap-align:start;
-  }
+  .hover-lift{@apply transition-transform transition-shadow;}
+  .hover-lift:hover{transform:translateY(-2px) scale(1.02);
+    box-shadow:0 8px 18px rgba(0,0,0,.12);}
+  .press-dent:active{transform:scale(.97);
+    box-shadow:0 4px 12px rgba(0,0,0,.20);}
 
-  /* hover-lift / press-dent (framer-motion fallbacks if JS disabled) */
-  .hover-lift{
-    transition:transform .2s ease,box-shadow .2s ease;
-  }
-  .hover-lift:hover{
-    transform:translateY(-2px) scale(1.02);
-    box-shadow:0 8px 18px rgba(0,0,0,.12);
-  }
-  .press-dent:active{
-    transform:scale(.97);
-    box-shadow:0 4px 12px rgba(0,0,0,.20);
-  }
-
-  /* focus ring helper */
-  .focus-ring{
-    @apply focus:outline-none focus:ring-2 focus:ring-mint-500;
-  }
+  .focus-ring{@apply focus:outline-none focus:ring-2 focus:ring-mint-500;}
 }

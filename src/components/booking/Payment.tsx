@@ -1,20 +1,39 @@
+import { useEffect, useState }            from 'react';
+import { loadStripe }                     from '@stripe/stripe-js';
+import { Elements, Appearance }           from '@stripe/react-stripe-js';
+import CheckoutForm                       from './CheckoutForm';
+
+/* ─── props ─── */
 export interface PaymentProps {
-  onSuccess: (result: { paymentIntentId: string }) => void
-  amount?: number
+    amount: number;                                        // cents
+    onSuccess: (r: { paymentIntentId: string }) => void;
 }
 
-export default function Payment({ onSuccess, amount = 0 }: PaymentProps) {
-  function handlePay() {
-    // pretend payment succeeded
-    setTimeout(() => onSuccess({ paymentIntentId: 'test' }), 500)
-  }
+/* ─── Stripe instance (outside component) ─── */
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY!);
 
-  return (
-    <div className="payment-step">
-      <p>{`Deposit amount: $${amount}`}</p>
-      <button onClick={handlePay}>Pay Deposit</button>
-    </div>
-  )
+export default function Payment({ amount, onSuccess }: PaymentProps) {
+    const [clientSecret, setClientSecret] = useState<string | null>(null);
+    const appearance: Appearance = { theme: 'stripe' };    // tweak colours later
+
+    /* fetch PI ⤵︎ once on mount */
+    useEffect(() => {
+        fetch('/api/create-payment-intent', {
+            method : 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body   : JSON.stringify({ amount }),
+        })
+            .then(r => r.json())
+            .then(({ clientSecret }) => setClientSecret(clientSecret))
+            .catch(() => console.error('⚠️  Payment-intent request failed'));
+    }, [amount]);
+
+    /* render children only when ready */
+    if (!clientSecret) return <p>Loading payment …</p>;
+
+    return (
+        <Elements stripe={stripePromise} options={{ clientSecret, appearance }}>
+            <CheckoutForm amount={amount} onSuccess={onSuccess} />
+        </Elements>
+    );
 }
-
-

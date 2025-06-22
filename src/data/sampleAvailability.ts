@@ -1,22 +1,52 @@
-import type { DailyAvailability } from '../types/calendar';
+/* --------------------------------------------------------------------------
+ *  sampleAvailability.ts – one-week demo data (single-capacity slots)
+ *
+ *  • 7  DailyAvailability objects   (Mon 02-Jun-2025 → Sun 08-Jun-2025)
+ *  • 30-min slots from 09:00 to 16:30
+ *  • 1 capacity per slot → label only shows when taken
+ *
+ *  Import where needed:
+ *     import { sampleAvailability } from '../../data/sampleAvailability';
+ * ------------------------------------------------------------------------- */
 
-export const sampleAvailability: DailyAvailability[] = [
-    {
-        date: new Date(2025, 5, 6),
-        slots: [
-            { id: 'x1', timeLabel: '08:30 AM', available: false, label: 'SOLD OUT!' },
-            { id: 'x2', timeLabel: '09:45 AM', available: false, label: 'SOLD OUT!' },
-            { id: 'x3', timeLabel: '11:00 AM', available: false, label: 'Waitlist'  },
-            { id: 'x4', timeLabel: '12:45 PM', available: false, label: 'Waitlist'  },
-            { id: 'x5', timeLabel: '02:00 PM', available: true,  label: '4 left!'  },
-            { id: 'x6', timeLabel: '03:15 PM', available: true,  label: 'SPECIAL OFFER' },
-        ],
-    },
-    {
-        date: new Date(2025, 5, 7),
-        slots: [
-            { id: 'y1', timeLabel: '08:30 AM', available: true,  label: '5 left!' },
-            { id: 'y2', timeLabel: '10:00 AM', available: true,  label: '3 left!' },
-        ],
-    },
-];
+import type { DailyAvailability } from '../types/calendar'
+
+/* helper – “HH:MM AM/PM” */
+function fmt (h: number, m: number): string {
+    const hh = h % 12 === 0 ? 12 : h % 12
+    const mm = m.toString().padStart(2, '0')
+    const suf = h < 12 ? 'AM' : 'PM'
+    return `${hh}:${mm} ${suf}`
+}
+
+/* build one day’s worth of 30-minute slots */
+function buildSlots (): DailyAvailability['slots'] {
+    const daySlots = []
+    for (let h = 9; h < 17; h++) {
+        for (let m = 0; m < 60; m += 30) {
+            const available = Math.random() < 0.3        // 30 % open
+            daySlots.push({
+                id:  `t${h}${m === 0 ? '00' : '30'}`,
+                timeLabel: fmt(h, m),
+                available,
+                label: available
+                    ? ''                                       // show nothing if open
+                    : Math.random() < 0.5 ? 'SOLD OUT' : 'Wait-list'
+            })
+        }
+    }
+    return daySlots
+}
+
+/* seven consecutive days starting Mon 02-Jun-2025 */
+export const sampleAvailability: DailyAvailability[] = (() => {
+    const week: DailyAvailability[] = []
+    const base = new Date(2025, 5, 2)                 // month index = 5 (June)
+
+    for (let i = 0; i < 7; i++) {
+        const date = new Date(base)
+        date.setDate(base.getDate() + i)
+        week.push({ date, slots: buildSlots() })
+    }
+    return week
+})()
